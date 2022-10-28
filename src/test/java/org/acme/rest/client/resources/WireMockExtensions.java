@@ -15,9 +15,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class WireMockExtensions implements QuarkusTestResourceLifecycleManager {
@@ -60,7 +58,12 @@ public class WireMockExtensions implements QuarkusTestResourceLifecycleManager {
                     String id = extension.asJsonObject().getString("id");
 
                     wireMockServer.stubFor(get(urlEqualTo(BASE_PATH + "/extensions?id=" + URLEncoder.encode(id, StandardCharsets.UTF_8)))
-                            .willReturn(okJson("[" + extension + "]")));
+                            .willReturn(okJson("[" + extension + "]").withFixedDelay(100_000)));
+                    wireMockServer.stubFor(post(urlEqualTo(BASE_PATH + "/extensions/search"))
+                            .willReturn(okJson("[" + extension + "]")
+//                            ))
+                                    .withFixedDelay(100_000)))
+                    ;
                 }
             }
 
