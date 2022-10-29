@@ -58,12 +58,9 @@ public class WireMockExtensions implements QuarkusTestResourceLifecycleManager {
                     String id = extension.asJsonObject().getString("id");
 
                     wireMockServer.stubFor(get(urlEqualTo(BASE_PATH + "/extensions?id=" + URLEncoder.encode(id, StandardCharsets.UTF_8)))
-                            .willReturn(okJson("[" + extension + "]").withFixedDelay(100_000)));
-                    wireMockServer.stubFor(post(urlEqualTo(BASE_PATH + "/extensions/search"))
                             .willReturn(okJson("[" + extension + "]")
-//                            ))
-                                    .withFixedDelay(100_000)))
-                    ;
+                                    // This delay triggers a timeout in the client, which triggers the NPE:
+                                    .withFixedDelay(100_000)));
                 }
             }
 
